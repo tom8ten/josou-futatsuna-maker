@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #090308;
+    color: #fdf2f8;
+    font-family: "Shippori Mincho", "Noto Serif JP", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    overflow-x: hidden;
+  }
+}
+
+/* UR 小悪魔オーロラ虹色アニメーション */
+@keyframes rainbowBorder {
+  0% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 35px rgba(236, 72, 153, 0.65), 0 0 75px rgba(168, 85, 247, 0.45);
+  }
+  50% {
+    background-position: 100% 50%;
+    box-shadow: 0 0 50px rgba(251, 191, 36, 0.7), 0 0 90px rgba(244, 114, 182, 0.55);
+  }
+  100% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 35px rgba(236, 72, 153, 0.65), 0 0 75px rgba(168, 85, 247, 0.45);
+  }
+}
+
+/* SSR ローズゴールドオーラアニメーション */
+@keyframes goldPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 30px rgba(244, 114, 182, 0.5), inset 0 0 20px rgba(251, 191, 36, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 55px rgba(251, 191, 36, 0.75), inset 0 0 30px rgba(244, 114, 182, 0.3);
+  }
+}
+
+@keyframes slowSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.ur-rainbow-card {
+  background: linear-gradient(
+    125deg,
+    #ec4899,
+    #f43f5e,
+    #fde047,
+    #c084fc,
+    #38bdf8,
+    #f472b6,
+    #ec4899
+  );
+  background-size: 300% 300%;
+  animation: rainbowBorder 4s ease infinite;
+}
+
+.ssr-gold-card {
+  background: linear-gradient(135deg, #fbcfe8, #f43f5e, #fde047, #db2777, #fde047);
+  background-size: 250% 250%;
+  animation: goldPulse 3s ease-in-out infinite;
+}
+
+.magic-circle-spin {
+  animation: slowSpin 28s linear infinite;
+}
+
+.shimmer-effect::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 75%
+  );
+  animation: shimmer 3.2s infinite;
+  pointer-events: none;
+}
