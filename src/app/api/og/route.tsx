@@ -83,7 +83,7 @@ function getRarityStyles(rarity: Rarity) {
         badgeBg: "linear-gradient(135deg, #57534e 0%, #292524 100%)",
         badgeText: "#e7e5e4",
         accentColor: "#e7e5e4",
-        subText: "B面ルーキー級 N",
+        subText: "A面ルーキー級 N",
       };
   }
 }
@@ -105,7 +105,7 @@ export async function GET(req: NextRequest) {
   const textToLoad = Array.from(
     new Set(
       (
-        `◆★女装二つ名メーカーB面ステータス鑑定結果称号属性由来：女子力戦闘力${result.name}さんの異名は『${result.fullTitle}』` +
+        `◆★女装二つ名メーカーA面ステータス鑑定結果称号属性由来：女子力戦闘力${result.name}さんの異名は『${result.fullTitle}』` +
         `推定女子力${result.combatPowerFormatted}固有スキル${result.skill.name}${result.skill.description}` +
         `${result.flavorText}${result.attribute}${rarityStyle.subText}${archetypeMeta.archetypeName}激レア出現！今日の運勢モード通常モード#女装二つ名メーカー#男の娘`
       ).split("")
@@ -183,8 +183,8 @@ export async function GET(req: NextRequest) {
                 }}
               >
                 {isDefault
-                  ? "名前を入力して秘められしB面の称号を覚醒せよ"
-                  : `${result.name} ちゃんのB面鑑定結果`}
+                  ? "名前を入力して秘められしA面の称号を覚醒せよ"
+                  : `${result.name} ちゃんのA面鑑定結果`}
               </div>
               {mode === "daily" && (
                 <div
@@ -239,7 +239,7 @@ export async function GET(req: NextRequest) {
             </div>
           </div>
 
-          {/* メイン：ビックリマン風B面シール ＋ 生成された二つ名 */}
+          {/* メイン：ビックリマン風A面シール ＋ 生成された二つ名 */}
           <div
             style={{
               display: "flex",
@@ -253,7 +253,7 @@ export async function GET(req: NextRequest) {
               borderRadius: "16px",
             }}
           >
-            {/* 左：ビックリマン風B面守護キャラシール */}
+            {/* 左：ビックリマン風A面守護キャラシール */}
             <div
               style={{
                 display: "flex",
@@ -300,7 +300,7 @@ export async function GET(req: NextRequest) {
               />
             </div>
 
-            {/* 右：覚醒せしB面の称号 */}
+            {/* 右：覚醒せしA面の称号 */}
             <div
               style={{
                 display: "flex",
@@ -319,7 +319,7 @@ export async function GET(req: NextRequest) {
                   letterSpacing: "0.1em",
                 }}
               >
-                ― 守護B面シール【{archetypeMeta.archetypeName}】覚醒せし称号 ―
+                ― 守護A面シール【{archetypeMeta.archetypeName}】覚醒せし称号 ―
               </div>
               <div
                 style={{

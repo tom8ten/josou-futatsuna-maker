@@ -271,7 +271,7 @@ export default function DiagnosisClient({
               <Sparkles className="w-10 h-10 text-pink-300 animate-pulse" />
             </div>
             <p className="text-pink-200 font-bold text-lg tracking-widest animate-pulse">
-              秘密のコンパクトからB面の異名を召喚中...
+              秘密のコンパクトからA面の異名を召喚中...
             </p>
             <p className="text-pink-400/50 text-xs mt-1">
               MAKEUP SEED: 0x{generateDiagnosis(inputName || "れいな", mode).seed.toString(16).toUpperCase()}
@@ -339,12 +339,12 @@ export default function DiagnosisClient({
                 <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-pink-500/25">
                   <div>
                     <div className="flex items-center gap-2 text-xs text-pink-300/80 tracking-widest uppercase">
-                      <span>SECRET B-SIDE ARCHIVE</span>
+                      <span>SECRET A-SIDE ARCHIVE</span>
                       <span>•</span>
                       <span>SEED #{result.seed.toString(16).toUpperCase().slice(0, 6)}</span>
                     </div>
                     <h2 className="text-lg sm:text-xl font-bold text-pink-100 mt-1 flex flex-wrap items-center gap-2">
-                      <span>{result.name} ちゃんのB面異名</span>
+                      <span>{result.name} ちゃんのA面異名</span>
                       {result.mode === "daily" && (
                         <span className="text-xs px-2.5 py-0.5 rounded-full bg-purple-950/90 border border-purple-400/50 text-purple-200">
                           今日の盛れ運勢 ({result.dateStr})
@@ -459,10 +459,10 @@ export default function DiagnosisClient({
                   </div>
                 </div>
 
-                {/* B面 5段階ステータスバー */}
+                {/* A面 5段階ステータスバー */}
                 <div className="bg-[#140711]/75 border border-pink-500/25 rounded-xl p-4 mb-5">
                   <div className="text-xs text-pink-300 font-bold mb-3 flex items-center justify-between">
-                    <span>◆ B面ヒロインステータス詳細 (HEROINE PARAMETERS)</span>
+                    <span>◆ A面ヒロインステータス詳細 (HEROINE PARAMETERS)</span>
                     <span className="text-amber-200/80 font-normal">{rarityInfo.nameJa}</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
@@ -504,7 +504,7 @@ export default function DiagnosisClient({
 
                 {/* カードフッター */}
                 <div className="mt-5 pt-3 border-t border-pink-500/20 flex items-center justify-between text-[11px] text-pink-300/50">
-                  <span>✦ 女装二つ名メーカー | B-SIDE STATUS GENERATOR</span>
+                  <span>✦ 女装二つ名メーカー | A-SIDE STATUS GENERATOR</span>
                   <span className="text-pink-300 font-bold">#女装二つ名メーカー #女装さんと繋がりたい</span>
                 </div>
               </article>
@@ -599,7 +599,7 @@ export default function DiagnosisClient({
         <header className="text-center mb-8 w-full">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-950/70 border border-pink-400/40 text-pink-200 text-xs md:text-sm tracking-widest mb-4 shadow-lg shadow-pink-950/50">
             <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-            <span>魔法のコンパクトが暴く、あなたのB面称号と推定女子力</span>
+            <span>魔法のコンパクトが暴く、あなたのA面称号と推定女子力</span>
             <Sparkles className="w-3.5 h-3.5 text-pink-400" />
           </div>
 
@@ -607,7 +607,7 @@ export default function DiagnosisClient({
             女装二つ名メーカー
           </h1>
           <p className="mt-3 text-pink-200/75 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-            お名前（B面ネーム・アカウント名）から唯一無二の異名を召喚。
+            お名前（A面ネーム・アカウント名）から唯一無二の異名を召喚。
             <span className="text-amber-300 font-semibold">
               傾国の美少女85% × 女装さんリアルあるある15%
             </span>
@@ -665,7 +665,7 @@ export default function DiagnosisClient({
                 type="text"
                 value={inputName}
                 onChange={(e) => setInputName(e.target.value)}
-                placeholder="B面のお名前やアカウント名を入力（例：れいな / @user）"
+                placeholder="A面のお名前やアカウント名を入力（例：れいな / @user）"
                 maxLength={32}
                 aria-label="診断する名前"
                 className="w-full px-4 py-3.5 sm:py-4 rounded-xl bg-[#0b0309]/90 border border-pink-500/40 text-pink-50 placeholder-pink-300/35 text-base sm:text-lg focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400/25 transition-all"
@@ -683,7 +683,7 @@ export default function DiagnosisClient({
               className="px-7 py-3.5 sm:py-4 rounded-xl font-black text-base sm:text-lg bg-gradient-to-r from-pink-500 via-rose-400 to-amber-300 text-stone-950 hover:brightness-110 active:scale-[0.99] disabled:opacity-40 disabled:pointer-events-none transition-all shadow-[0_0_25px_rgba(236,72,153,0.45)] flex items-center justify-center gap-2 cursor-pointer shrink-0"
             >
               <Wand2 className={`w-5 h-5 ${isSummoning ? "animate-spin" : ""}`} />
-              <span>{isSummoning ? "コンパクト詠唱中..." : "B面称号を覚醒させる"}</span>
+              <span>{isSummoning ? "コンパクト詠唱中..." : "A面称号を覚醒させる"}</span>
             </button>
           </form>
 
@@ -799,7 +799,7 @@ export default function DiagnosisClient({
 
       {/* フッター */}
       <footer className="relative z-10 mt-12 text-center text-xs text-pink-300/40">
-        <p>女装二つ名メーカー — B-Side Heroine Status & Dynamic OGP Generator</p>
+        <p>女装二つ名メーカー — A-Side Heroine Status & Dynamic OGP Generator</p>
       </footer>
     </div>
   );

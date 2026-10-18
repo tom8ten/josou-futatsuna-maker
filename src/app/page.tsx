@@ -28,13 +28,13 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   if (!rawName) {
     const defaultOgUrl = `${baseUrl}/api/og`;
     return {
-      title: "女装二つ名メーカー｜B面ステータス＆推定女子力・異名診断",
+      title: "女装二つ名メーカー｜A面ステータス＆推定女子力・異名診断",
       description:
-        "名前を入力するだけで、あなたの秘められし『女装二つ名（B面称号）』と推定女子力・固有メイクスキルを鑑定！Xで結果カード付きシェアが可能。",
+        "名前を入力するだけで、あなたの秘められし『女装二つ名（A面称号）』と推定女子力・固有メイクスキルを鑑定！Xで結果カード付きシェアが可能。",
       openGraph: {
-        title: "女装二つ名メーカー｜B面ステータス＆推定女子力・異名診断",
+        title: "女装二つ名メーカー｜A面ステータス＆推定女子力・異名診断",
         description:
-          "名前を入力するだけで、あなたの秘められし『女装二つ名（B面称号）』と推定女子力・固有メイクスキルを鑑定！",
+          "名前を入力するだけで、あなたの秘められし『女装二つ名（A面称号）』と推定女子力・固有メイクスキルを鑑定！",
         images: [
           {
             url: defaultOgUrl,
@@ -47,8 +47,8 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
       },
       twitter: {
         card: "summary_large_image",
-        title: "女装二つ名メーカー｜B面ステータス＆推定女子力・異名診断",
-        description: "名前から決定論的ハッシュでB面の二つ名と女子力ステータスを生成！",
+        title: "女装二つ名メーカー｜A面ステータス＆推定女子力・異名診断",
+        description: "名前から決定論的ハッシュでA面の二つ名と女子力ステータスを生成！",
         images: [defaultOgUrl],
       },
     };
@@ -63,7 +63,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   }
   const ogImageUrl = `${baseUrl}/api/og?${ogParams.toString()}`;
 
-  const pageTitle = `【${result.name}】のB面異名は『${result.fullTitle}』（レア度：${result.rarity} / 女子力：${result.combatPowerFormatted}）｜女装二つ名メーカー`;
+  const pageTitle = `【${result.name}】のA面異名は『${result.fullTitle}』（レア度：${result.rarity} / 女子力：${result.combatPowerFormatted}）｜女装二つ名メーカー`;
   const pageDesc = `固有スキル：【${result.skill.name}】（${result.skill.description}）― ${result.flavorText}`;
 
   return {

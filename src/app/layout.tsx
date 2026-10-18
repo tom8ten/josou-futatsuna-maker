@@ -9,9 +9,9 @@ const shipporiMincho = Shippori_Mincho({
 });
 
 export const metadata: Metadata = {
-  title: "女装二つ名メーカー｜B面ステータス＆推定女子力・異名診断",
+  title: "女装二つ名メーカー｜A面ステータス＆推定女子力・異名診断",
   description:
-    "名前を入力するだけで、あなたの秘められし『女装二つ名（B面称号）』と推定女子力・固有メイクスキルを鑑定！Xで結果カード付きシェアが可能。",
+    "名前を入力するだけで、あなたの秘められし『女装二つ名（A面称号）』と推定女子力・固有メイクスキルを鑑定！Xで結果カード付きシェアが可能。",
 };
 
 export default function RootLayout({

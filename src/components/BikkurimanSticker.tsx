@@ -104,7 +104,7 @@ export default function BikkurimanSticker({ result }: BikkurimanStickerProps) {
                     color: isNormal ? "#e7e5e4" : meta.sealBadgeText,
                   }}
                 >
-                  {isNormal ? "一般B面シール" : meta.categoryLabel}
+                  {isNormal ? "一般A面シール" : meta.categoryLabel}
                 </span>
 
                 <div className="flex items-center gap-1">
@@ -192,7 +192,7 @@ export default function BikkurimanSticker({ result }: BikkurimanStickerProps) {
               <div>
                 <div className="flex items-center justify-between border-b-2 border-pink-900 pb-1">
                   <span className="text-[10px] font-black bg-pink-600 text-yellow-100 px-1.5 py-0.5 rounded">
-                    小悪魔VS天使 B面シール
+                    小悪魔VS天使 A面シール
                   </span>
                   <span className="text-xs font-mono font-black text-pink-900">
                     No.{stickerNo} [{result.rarity}]
@@ -233,7 +233,7 @@ export default function BikkurimanSticker({ result }: BikkurimanStickerProps) {
 
               {/* 秘密のドレッサーウワサ欄 */}
               <div className="bg-pink-50 border-2 border-dashed border-pink-600 rounded p-1.5 text-[10px] leading-snug text-left">
-                <span className="font-black text-pink-700 mr-1">【B面のウワサ】</span>
+                <span className="font-black text-pink-700 mr-1">【A面のウワサ】</span>
                 <span className="text-stone-900 font-semibold">{result.flavorText}</span>
               </div>
 

@@ -115,7 +115,7 @@ export function getBikkurimanArchetype(
     suffix.includes("足音") ||
     suffix.includes("RTA走者") ||
     suffix.includes("周回ランナー") ||
-    suffix.includes("A面（職場）") ||
+    suffix.includes("職場") ||
     suffix.includes("お出かけ30分")
   ) {
     return "teiji_dash";
@@ -266,7 +266,7 @@ export const ARCHETYPE_META: Record<BikkurimanArchetype, ArchetypeMeta> = {
   },
   teiji_dash: {
     id: "teiji_dash",
-    categoryLabel: "B面ステルス珍聖",
+    categoryLabel: "A面ステルス珍聖",
     archetypeName: "玄関応対・高速変身系",
     imageSrc: "/stickers/teiji_dash.jpg",
     sealBadgeBg: "#0284c7",
@@ -326,7 +326,7 @@ export const ARCHETYPE_META: Record<BikkurimanArchetype, ArchetypeMeta> = {
   },
   ouch_sinner: {
     id: "ouch_sinner",
-    categoryLabel: "B面あるある受難",
+    categoryLabel: "A面あるある受難",
     archetypeName: "ピンヒール崩壊・冬場生足系",
     imageSrc: "/stickers/ouch_sinner.jpg",
     sealBadgeBg: "#9d174d",
