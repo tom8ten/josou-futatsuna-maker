@@ -24,25 +24,12 @@ export default function BikkurimanSticker({ result }: BikkurimanStickerProps) {
   const stickerNo = String((result.seed % 999) + 1).padStart(3, "0");
   const isNormal = result.rarity === "N";
 
-  // 派生系統の色相バリエーション ＋ レア度別の発色差（Nは彩度を抑えたレトロ紙印刷トーン）
-  const baseHueFilter =
-    archetype === "observer"
-      ? "hue-rotate(315deg)"
-      : archetype === "cat_servant"
-      ? "hue-rotate(310deg)"
-      : archetype === "hangaku_hunter"
-      ? "hue-rotate(335deg)"
-      : archetype === "broke_noble"
-      ? "hue-rotate(35deg)"
-      : "";
-
-  const rarityToneFilter = isNormal
+  // レア度別の発色差（Nは彩度を抑えたレトロ紙印刷トーン、R以上は鮮やかな発色）
+  const imageFilter = isNormal
     ? "saturate(0.45) contrast(0.88) brightness(0.82) sepia(0.22)"
     : result.rarity === "R"
     ? "saturate(1.12) contrast(1.06) brightness(1.03)"
     : "saturate(1.2) contrast(1.08) brightness(1.05)";
-
-  const imageFilter = `${baseHueFilter} ${rarityToneFilter}`.trim();
 
   // シール外枠のレア度別スタイル（Nはツヤなしの素朴な紙・石枠、R以上はメタリック＆発光）
   const outerFrameClass =
