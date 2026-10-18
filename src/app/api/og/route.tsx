@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import { generateDiagnosis, DiagnosisMode, Rarity } from "@/lib/dictionary";
+import { ARCHETYPE_META, getBikkurimanArchetype } from "@/lib/bikkuriman";
 
 export const runtime = "edge";
 
@@ -77,11 +78,11 @@ function getRarityStyles(rarity: Rarity) {
     case "N":
     default:
       return {
-        borderColor: "#f472b6",
-        outerGlow: "rgba(244, 114, 182, 0.25)",
-        badgeBg: "linear-gradient(135deg, #831843 0%, #4c1d95 100%)",
-        badgeText: "#fce7f3",
-        accentColor: "#fbcfe8",
+        borderColor: "#78716c",
+        outerGlow: "rgba(120, 113, 108, 0.2)",
+        badgeBg: "linear-gradient(135deg, #57534e 0%, #292524 100%)",
+        badgeText: "#e7e5e4",
+        accentColor: "#e7e5e4",
         subText: "B面ルーキー級 N",
       };
   }
@@ -97,13 +98,16 @@ export async function GET(req: NextRequest) {
   const isDefault = !rawName.trim();
   const result = generateDiagnosis(isDefault ? "秘密のシンデレラ" : rawName, mode, dateParam);
   const rarityStyle = getRarityStyles(result.rarity);
+  const archetypeId = getBikkurimanArchetype(result.suffix, result.attribute, result.isGap);
+  const archetypeMeta = ARCHETYPE_META[archetypeId];
+  const stickerImgUrl = new URL(archetypeMeta.imageSrc, req.url).toString();
 
   const textToLoad = Array.from(
     new Set(
       (
         `◆★女装二つ名メーカーB面ステータス鑑定結果称号属性由来：女子力戦闘力${result.name}さんの異名は『${result.fullTitle}』` +
         `推定女子力${result.combatPowerFormatted}固有スキル${result.skill.name}${result.skill.description}` +
-        `${result.flavorText}${result.attribute}${rarityStyle.subText}激レア出現！今日の運勢モード通常モード#女装二つ名メーカー#男の娘`
+        `${result.flavorText}${result.attribute}${rarityStyle.subText}${archetypeMeta.sealTitle}激レア出現！今日の運勢モード通常モード#女装二つ名メーカー#男の娘`
       ).split("")
     )
   ).join("");
@@ -235,54 +239,112 @@ export async function GET(req: NextRequest) {
             </div>
           </div>
 
-          {/* メイン：生成された二つ名 */}
+          {/* メイン：ビックリマン風B面シール ＋ 生成された二つ名 */}
           <div
             style={{
               display: "flex",
-              flexDirection: "column",
               alignItems: "center",
-              justifyContent: "center",
-              padding: "16px 24px",
-              margin: "8px 0",
+              justifyContent: "space-between",
+              gap: "24px",
+              padding: "14px 26px",
+              margin: "6px 0",
               backgroundColor: "rgba(36, 11, 30, 0.78)",
               border: "1px solid rgba(244, 114, 182, 0.4)",
               borderRadius: "16px",
             }}
           >
+            {/* 左：ビックリマン風B面守護キャラシール */}
             <div
               style={{
                 display: "flex",
-                fontSize: "18px",
-                color: "#f9a8d4",
-                marginBottom: "4px",
-                letterSpacing: "0.12em",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "152px",
+                height: "152px",
+                borderRadius: "12px",
+                border:
+                  result.rarity === "N"
+                    ? "3px solid #a8a29e"
+                    : `4px solid ${rarityStyle.borderColor}`,
+                background:
+                  result.rarity === "UR"
+                    ? "linear-gradient(135deg, #ec4899, #fbbf24, #38bdf8, #a855f7)"
+                    : result.rarity === "SSR"
+                    ? "linear-gradient(135deg, #fda4af, #f59e0b, #fde047)"
+                    : result.rarity === "N"
+                    ? "#d6d3d1"
+                    : "linear-gradient(135deg, #d946ef, #ec4899)",
+                padding: "4px",
+                boxShadow:
+                  result.rarity === "N"
+                    ? "0 2px 8px rgba(0, 0, 0, 0.4)"
+                    : `0 0 24px ${rarityStyle.outerGlow}`,
+                position: "relative",
+                overflow: "hidden",
+                flexShrink: 0,
               }}
             >
-              ― 鏡の向こうで覚醒せしB面の称号 ―
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={stickerImgUrl}
+                alt={archetypeMeta.sealTitle}
+                width={136}
+                height={136}
+                style={{
+                  width: "136px",
+                  height: "136px",
+                  borderRadius: "8px",
+                  objectFit: "cover",
+                }}
+              />
             </div>
+
+            {/* 右：覚醒せしB面の称号 */}
             <div
               style={{
                 display: "flex",
-                fontSize: "32px",
-                fontWeight: 700,
-                color: "#fde68a",
-                marginBottom: "2px",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                flex: 1,
               }}
             >
-              {result.prefix}
-            </div>
-            <div
-              style={{
-                display: "flex",
-                fontSize: result.suffix.length > 12 ? "48px" : "56px",
-                fontWeight: 900,
-                color: rarityStyle.accentColor,
-                textAlign: "center",
-                lineHeight: 1.18,
-                textShadow: "0 4px 24px rgba(236, 72, 153, 0.55)",
-              }}
-            >
-              『{result.suffix}』
+              <div
+                style={{
+                  display: "flex",
+                  fontSize: "17px",
+                  color: "#f9a8d4",
+                  marginBottom: "4px",
+                  letterSpacing: "0.1em",
+                }}
+              >
+                ― 守護B面シール【{archetypeMeta.sealTitle}】覚醒せし称号 ―
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  fontSize: "30px",
+                  fontWeight: 700,
+                  color: "#fde68a",
+                  marginBottom: "2px",
+                }}
+              >
+                {result.prefix}
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  fontSize: result.suffix.length > 12 ? "44px" : "52px",
+                  fontWeight: 900,
+                  color: rarityStyle.accentColor,
+                  textAlign: "center",
+                  lineHeight: 1.16,
+                  textShadow: "0 4px 24px rgba(236, 72, 153, 0.55)",
+                }}
+              >
+                『{result.suffix}』
+              </div>
             </div>
           </div>
 

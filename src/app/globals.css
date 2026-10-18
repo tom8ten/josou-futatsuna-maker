@@ -92,3 +92,139 @@
   animation: shimmer 3.2s infinite;
   pointer-events: none;
 }
+
+/* ==========================================
+   ビックリマン風 角プリズム・ホログラム演出
+   ========================================== */
+@keyframes prismShift {
+  0% {
+    background-position: 0% 0%, 0px 0px, 0px 0px;
+    filter: hue-rotate(0deg) brightness(1.05);
+  }
+  50% {
+    background-position: 100% 100%, 0px 0px, 0px 0px;
+    filter: hue-rotate(35deg) brightness(1.18);
+  }
+  100% {
+    background-position: 0% 0%, 0px 0px, 0px 0px;
+    filter: hue-rotate(0deg) brightness(1.05);
+  }
+}
+
+@keyframes goldPrismPulse {
+  0%,
+  100% {
+    background-position: 0% 50%, 0 0, 0 0;
+    filter: brightness(1.05) contrast(1.08);
+  }
+  50% {
+    background-position: 100% 50%, 0 0, 0 0;
+    filter: brightness(1.22) contrast(1.15);
+  }
+}
+
+/* UR: 虹色角プリズム（傾国神話ヘッド仕様） */
+.bikkuriman-prism-ur {
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(255, 0, 128, 0.72) 0%,
+      rgba(255, 230, 0, 0.78) 22%,
+      rgba(0, 255, 180, 0.72) 45%,
+      rgba(0, 170, 255, 0.78) 68%,
+      rgba(190, 0, 255, 0.75) 88%,
+      rgba(255, 0, 128, 0.72) 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.38) 0px,
+      rgba(255, 255, 255, 0.38) 9px,
+      rgba(0, 0, 0, 0.22) 9px,
+      rgba(0, 0, 0, 0.22) 18px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.42) 0px,
+      rgba(240, 240, 240, 0.12) 9px,
+      rgba(0, 0, 0, 0.22) 9px,
+      rgba(255, 255, 255, 0.35) 18px
+    );
+  background-size: 260% 260%, 18px 18px, 18px 18px;
+  background-blend-mode: hard-light, overlay, normal;
+  animation: prismShift 5s ease-in-out infinite;
+}
+
+/* SSR: 黄金×ローズ角プリズム（国宝ヘッド仕様） */
+.bikkuriman-prism-ssr {
+  background-image:
+    linear-gradient(
+      125deg,
+      #fef08a 0%,
+      #f472b6 25%,
+      #fffbeb 48%,
+      #f59e0b 72%,
+      #fde047 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.45) 0px,
+      rgba(251, 191, 36, 0.2) 10px,
+      rgba(157, 23, 77, 0.35) 10px,
+      rgba(254, 240, 138, 0.4) 20px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.45) 0px,
+      rgba(236, 72, 153, 0.2) 10px,
+      rgba(131, 24, 67, 0.35) 10px,
+      rgba(254, 249, 195, 0.45) 20px
+    );
+  background-size: 220% 220%, 20px 20px, 20px 20px;
+  background-blend-mode: overlay, hard-light, normal;
+  animation: goldPrismPulse 4s ease-in-out infinite;
+}
+
+/* SR: 銀アルミ角プリズム */
+.bikkuriman-prism-sr {
+  background-image:
+    linear-gradient(
+      135deg,
+      #f8fafc 0%,
+      #f0abfc 28%,
+      #e2e8f0 52%,
+      #94a3b8 76%,
+      #f1f5f9 100%
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.45) 0px,
+      rgba(255, 255, 255, 0.45) 10px,
+      rgba(30, 41, 59, 0.25) 10px,
+      rgba(30, 41, 59, 0.25) 20px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.45) 0px,
+      rgba(148, 163, 184, 0.2) 10px,
+      rgba(30, 41, 59, 0.25) 10px,
+      rgba(255, 255, 255, 0.4) 20px
+    );
+  background-size: 200% 200%, 20px 20px, 20px 20px;
+  background-blend-mode: overlay, hard-light, normal;
+}
+
+/* R: 扇サンバーストプリズム */
+.bikkuriman-prism-r {
+  background-image: repeating-conic-gradient(
+    from 0deg at 50% 55%,
+    rgba(255, 255, 255, 0.28) 0deg 10deg,
+    rgba(0, 0, 0, 0.12) 10deg 20deg
+  );
+}
+
+/* N: レトロハーフトーン */
+.bikkuriman-prism-n {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.22) 1.5px, transparent 1.5px);
+  background-size: 10px 10px;
+}
+

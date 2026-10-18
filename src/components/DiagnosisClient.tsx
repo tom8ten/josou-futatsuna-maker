@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   Sparkles,
   Heart,
@@ -29,28 +29,45 @@ import {
   COOL_SUFFIXES,
   GAP_SUFFIXES,
 } from "@/lib/dictionary";
+import BikkurimanSticker from "@/components/BikkurimanSticker";
 
 interface DiagnosisClientProps {
   initialName: string;
   initialMode: DiagnosisMode;
   initialDate?: string;
+  autoShowResult?: boolean;
 }
 
 export default function DiagnosisClient({
   initialName,
   initialMode,
   initialDate,
+  autoShowResult = false,
 }: DiagnosisClientProps) {
   const [inputName, setInputName] = useState(initialName);
   const [mode, setMode] = useState<DiagnosisMode>(initialMode);
   const [result, setResult] = useState<DiagnosisResult | null>(() =>
-    initialName.trim() ? generateDiagnosis(initialName, initialMode, initialDate) : null
+    autoShowResult && initialName.trim()
+      ? generateDiagnosis(initialName, initialMode, initialDate)
+      : null
   );
   const [isSummoning, setIsSummoning] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [showOgPreview, setShowOgPreview] = useState(false);
   const [showDictModal, setShowDictModal] = useState(false);
+  const topAnchorRef = useRef<HTMLDivElement>(null);
+
+  const scrollToTop = useCallback(() => {
+    if (typeof window === "undefined") return;
+    const doScroll = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+      topAnchorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    doScroll();
+    requestAnimationFrame(doScroll);
+    setTimeout(doScroll, 100);
+  }, []);
 
   const syncUrlParams = useCallback((targetName: string, targetMode: DiagnosisMode) => {
     if (typeof window === "undefined") return;
@@ -82,10 +99,18 @@ export default function DiagnosisClient({
 
     if (!targetName) return;
 
+    // スマホでソフトキーボードが開いている場合、フォーカスを外してスクロール阻害を防ぐ
+    if (typeof document !== "undefined" && document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+
+    scrollToTop();
+
     if (skipAnimation) {
       const diag = generateDiagnosis(targetName, targetMode);
       setResult(diag);
       syncUrlParams(targetName, targetMode);
+      scrollToTop();
       return;
     }
 
@@ -95,12 +120,13 @@ export default function DiagnosisClient({
       setResult(diag);
       setIsSummoning(false);
       syncUrlParams(targetName, targetMode);
+      scrollToTop();
     }, 650);
   };
 
   const handleModeToggle = (newMode: DiagnosisMode) => {
     setMode(newMode);
-    if (inputName.trim()) {
+    if (result && inputName.trim()) {
       handleDiagnose(inputName, newMode, false);
     }
   };
@@ -177,6 +203,8 @@ export default function DiagnosisClient({
   >([]);
 
   useEffect(() => {
+    let nName = "れいな";
+    let rName = "かのん";
     let urName = "るな";
     let ssrName = "みお";
     let gapName = "あかり";
@@ -184,6 +212,12 @@ export default function DiagnosisClient({
     for (let i = 1; i <= 1500; i++) {
       const candidate = `シンデレラ#${i}`;
       const d = generateDiagnosis(candidate, "standard");
+      if (d.rarity === "N" && !d.isGap && nName === "れいな") {
+        nName = candidate;
+      }
+      if (d.rarity === "R" && !d.isGap && rName === "かのん") {
+        rName = candidate;
+      }
       if (d.rarity === "UR" && urName === "るな") {
         urName = candidate;
       }
@@ -193,21 +227,32 @@ export default function DiagnosisClient({
       if (d.isGap && (d.rarity === "SR" || d.rarity === "SSR") && gapName === "あかり") {
         gapName = candidate;
       }
-      if (urName !== "るな" && ssrName !== "みお" && gapName !== "あかり") break;
+      if (
+        nName !== "れいな" &&
+        rName !== "かのん" &&
+        urName !== "るな" &&
+        ssrName !== "みお" &&
+        gapName !== "あかり"
+      )
+        break;
     }
 
     setSamplePresets([
-      { label: "小悪魔サンプル", name: "れいな", badge: "定番" },
+      { label: "Nサンプル", name: nName, badge: "N (紙シール)" },
+      { label: "Rサンプル", name: rName, badge: "R (扇キラ)" },
       { label: "女装あるある15%枠", name: gapName, badge: "ギャップ" },
-      { label: "SSR確定サンプル", name: ssrName, badge: "SSR (4.5%)" },
-      { label: "UR傾国神話サンプル", name: urName, badge: "UR (0.5%)" },
+      { label: "SSRサンプル", name: ssrName, badge: "SSR (4.5%)" },
+      { label: "UR傾国神話", name: urName, badge: "UR (0.5%)" },
     ]);
   }, []);
 
   const rarityInfo = result ? RARITY_META[result.rarity] : null;
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-between px-4 py-8 md:py-12 selection:bg-pink-500/30 selection:text-pink-200">
+    <div
+      ref={topAnchorRef}
+      className="relative min-h-screen flex flex-col items-center justify-between px-4 py-8 md:py-12 selection:bg-pink-500/30 selection:text-pink-200 [overflow-anchor:none]"
+    >
       {/* 背景の小悪魔ゴシック＆ローズオーラ */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
         <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[760px] h-[420px] rounded-full bg-pink-600/15 blur-[130px]" />
@@ -216,138 +261,10 @@ export default function DiagnosisClient({
       </div>
 
       {/* メインコンテナ */}
-      <main className="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center">
-        {/* ヘッダー・タイトルセクション */}
-        <header className="text-center mb-8 w-full">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-950/70 border border-pink-400/40 text-pink-200 text-xs md:text-sm tracking-widest mb-4 shadow-lg shadow-pink-950/50">
-            <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-            <span>魔法のコンパクトが暴く、あなたのB面称号と推定女子力</span>
-            <Sparkles className="w-3.5 h-3.5 text-pink-400" />
-          </div>
-
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-wider bg-gradient-to-b from-pink-100 via-pink-300 to-amber-300 bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(236,72,153,0.45)]">
-            女装二つ名メーカー
-          </h1>
-          <p className="mt-3 text-pink-200/75 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-            お名前（B面ネーム・アカウント名）から唯一無二の異名を召喚。
-            <span className="text-amber-300 font-semibold">
-              傾国の美少女85% × 女装さんリアルあるある15%
-            </span>
-            の小悪魔ガチャ診断！
-          </p>
-        </header>
-
-        {/* 入力＆モード切替パネル */}
-        <section className="w-full bg-gradient-to-b from-[#1a0916]/95 to-[#11050e]/95 border border-pink-500/40 rounded-2xl p-5 sm:p-7 shadow-[0_0_50px_rgba(0,0,0,0.85)] backdrop-blur-md mb-8">
-          {/* モード切り替えトグル */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pb-5 mb-5 border-b border-pink-500/20">
-            <div className="flex items-center gap-2 text-xs sm:text-sm text-pink-200">
-              <BookOpen className="w-4 h-4 text-pink-400 shrink-0" />
-              <span>鑑定モード選択：</span>
-            </div>
-
-            <div className="grid grid-cols-2 bg-[#0c040a] p-1 rounded-xl border border-pink-500/30 w-full sm:w-auto">
-              <button
-                type="button"
-                onClick={() => handleModeToggle("standard")}
-                className={`flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  mode === "standard"
-                    ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md shadow-pink-500/25"
-                    : "text-pink-300/60 hover:text-pink-200"
-                }`}
-              >
-                <Crown className="w-3.5 h-3.5" />
-                <span>通常モード（名前固定）</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleModeToggle("daily")}
-                className={`flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                  mode === "daily"
-                    ? "bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md shadow-purple-500/25"
-                    : "text-pink-300/60 hover:text-pink-200"
-                }`}
-              >
-                <Calendar className="w-3.5 h-3.5" />
-                <span>今日の盛れ運勢（日替わり）</span>
-              </button>
-            </div>
-          </div>
-
-          {/* 名前入力フォーム */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleDiagnose();
-            }}
-            className="flex flex-col sm:flex-row gap-3"
-          >
-            <div className="relative flex-1">
-              <input
-                type="text"
-                value={inputName}
-                onChange={(e) => setInputName(e.target.value)}
-                placeholder="B面のお名前やアカウント名を入力（例：れいな / @user）"
-                maxLength={32}
-                aria-label="診断する名前"
-                className="w-full px-4 py-3.5 sm:py-4 rounded-xl bg-[#0b0309]/90 border border-pink-500/40 text-pink-50 placeholder-pink-300/35 text-base sm:text-lg focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400/25 transition-all"
-              />
-              {inputName && (
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-pink-300/50">
-                  {inputName.length}/32
-                </span>
-              )}
-            </div>
-
-            <button
-              type="submit"
-              disabled={!inputName.trim() || isSummoning}
-              className="px-7 py-3.5 sm:py-4 rounded-xl font-black text-base sm:text-lg bg-gradient-to-r from-pink-500 via-rose-400 to-amber-300 text-stone-950 hover:brightness-110 active:scale-[0.99] disabled:opacity-40 disabled:pointer-events-none transition-all shadow-[0_0_25px_rgba(236,72,153,0.45)] flex items-center justify-center gap-2 cursor-pointer shrink-0"
-            >
-              <Wand2 className={`w-5 h-5 ${isSummoning ? "animate-spin" : ""}`} />
-              <span>{isSummoning ? "コンパクト詠唱中..." : "B面称号を覚醒させる"}</span>
-            </button>
-          </form>
-
-          {/* クイック体験サンプル＆確率表ボタン */}
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 pt-2">
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-xs text-pink-300/70 mr-1">一発体験：</span>
-              {samplePresets.map((preset) => (
-                <button
-                  key={preset.label}
-                  type="button"
-                  onClick={() => {
-                    setInputName(preset.name);
-                    setMode("standard");
-                    handleDiagnose(preset.name, "standard", false);
-                  }}
-                  className="text-xs px-2.5 py-1 rounded-lg bg-[#140711] hover:bg-pink-950/70 border border-pink-800/50 hover:border-pink-400/60 text-pink-200 transition-colors cursor-pointer flex items-center gap-1"
-                >
-                  <span>{preset.label}</span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-pink-500/20 text-amber-200 font-bold">
-                    {preset.badge}
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setShowDictModal(true)}
-              className="text-xs text-pink-300/80 hover:text-pink-200 underline underline-offset-4 flex items-center gap-1 cursor-pointer"
-            >
-              <HelpCircle className="w-3.5 h-3.5" />
-              <span>
-                排出確率・収録ワード({PREFIXES.length + COOL_SUFFIXES.length + GAP_SUFFIXES.length}種)を見る
-              </span>
-            </button>
-          </div>
-        </section>
-
-        {/* ガチャ召喚ローディング演出 */}
+      <main className="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center [overflow-anchor:none]">
+        {/* ガチャ召喚ローディング演出（最上部表示） */}
         {isSummoning && (
-          <div className="w-full py-20 flex flex-col items-center justify-center bg-[#12060f]/80 border border-pink-500/35 rounded-3xl mb-8">
+          <div className="w-full py-20 flex flex-col items-center justify-center bg-[#12060f]/80 border border-pink-500/35 rounded-3xl mb-10">
             <div className="relative w-24 h-24 flex items-center justify-center mb-5">
               <div className="absolute inset-0 rounded-full border-2 border-dashed border-pink-400 animate-spin" />
               <div className="absolute inset-2 rounded-full border border-amber-300/60 animate-ping" />
@@ -362,9 +279,9 @@ export default function DiagnosisClient({
           </div>
         )}
 
-        {/* 診断結果カード */}
+        {/* 診断結果カード（生成時はページ最上部に表示） */}
         {!isSummoning && result && rarityInfo && (
-          <div className="w-full space-y-6 animate-in fade-in duration-500">
+          <div className="w-full space-y-6 animate-in fade-in duration-500 mb-10">
             {/* UR / SSR 出現時の特別バナー */}
             {rarityInfo.isUltraRare && (
               <div
@@ -382,14 +299,18 @@ export default function DiagnosisClient({
               </div>
             )}
 
-            {/* 外枠（UR虹色 / SSRローズゴールド / 通常ピンクゴールド枠） */}
+            {/* 外枠（UR虹色 / SSRローズゴールド / SR・R輝き枠 / N控えめ枠） */}
             <div
               className={`p-[3px] rounded-3xl transition-all ${
                 result.rarity === "UR"
                   ? "ur-rainbow-card"
                   : result.rarity === "SSR"
                   ? "ssr-gold-card"
-                  : "bg-gradient-to-b from-pink-400/75 via-fuchsia-700/40 to-amber-500/60 shadow-[0_0_45px_rgba(236,72,153,0.22)]"
+                  : result.rarity === "SR"
+                  ? "bg-gradient-to-b from-fuchsia-400/90 via-pink-500/70 to-amber-400/80 shadow-[0_0_45px_rgba(232,121,249,0.3)]"
+                  : result.rarity === "R"
+                  ? "bg-gradient-to-b from-pink-400/85 via-fuchsia-600/60 to-amber-400/70 shadow-[0_0_38px_rgba(236,72,153,0.28)]"
+                  : "bg-stone-800/80 shadow-[0_0_16px_rgba(0,0,0,0.65)]"
               }`}
             >
               {/* カード本体 */}
@@ -444,13 +365,20 @@ export default function DiagnosisClient({
                   {/* レアリティバッジ */}
                   <div className="flex items-center gap-2">
                     <div
-                      className={`relative overflow-hidden shimmer-effect px-4 py-1.5 rounded-xl bg-gradient-to-r ${rarityInfo.badgeBg} text-white font-black tracking-wider shadow-lg border border-pink-200/60`}
+                      className={`relative overflow-hidden px-4 py-1.5 rounded-xl bg-gradient-to-r ${rarityInfo.badgeBg} font-black tracking-wider ${
+                        result.rarity === "N"
+                          ? "text-stone-300 border border-stone-600/80 shadow-inner"
+                          : "shimmer-effect text-white shadow-lg border border-pink-200/60"
+                      }`}
                     >
                       <span className="text-xs opacity-90 mr-1.5">RARITY</span>
                       <span className="text-xl sm:text-2xl">{result.rarity}</span>
                     </div>
                   </div>
                 </div>
+
+                {/* ビックリマン風 守護キャラ・キラシール召喚セクション */}
+                <BikkurimanSticker result={result} />
 
                 {/* カード中央：生成された二つ名 */}
                 <div className="my-6 py-7 px-4 sm:px-6 rounded-2xl bg-gradient-to-b from-[#1f0a1b]/90 via-[#150612] to-[#0d040b]/90 border border-pink-400/35 text-center relative shadow-inner">
@@ -459,17 +387,23 @@ export default function DiagnosisClient({
                   </p>
 
                   <div className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-snug break-keep">
-                    <span className="block text-lg sm:text-2xl md:text-3xl text-amber-200/95 mb-1 font-bold">
+                    <span
+                      className={`block text-lg sm:text-2xl md:text-3xl mb-1 font-bold ${
+                        result.rarity === "N" ? "text-stone-300/90" : "text-amber-200/95"
+                      }`}
+                    >
                       {result.prefix}
                     </span>
                     <span
                       className={`bg-clip-text text-transparent bg-gradient-to-r ${
                         result.rarity === "UR"
-                          ? "from-pink-200 via-amber-200 to-purple-200"
+                          ? "from-pink-200 via-amber-200 to-purple-200 drop-shadow-[0_2px_18px_rgba(236,72,153,0.45)]"
+                          : result.rarity === "N"
+                          ? "from-stone-200 via-pink-100/85 to-stone-300"
                           : result.isGap
-                          ? "from-amber-200 via-pink-300 to-rose-300"
-                          : "from-pink-100 via-pink-300 to-amber-200"
-                      } drop-shadow-[0_2px_18px_rgba(236,72,153,0.45)]`}
+                          ? "from-amber-200 via-pink-300 to-rose-300 drop-shadow-[0_2px_18px_rgba(236,72,153,0.45)]"
+                          : "from-pink-100 via-pink-300 to-amber-200 drop-shadow-[0_2px_18px_rgba(236,72,153,0.45)]"
+                      }`}
                     >
                       『{result.suffix}』
                     </span>
@@ -660,6 +594,134 @@ export default function DiagnosisClient({
             </section>
           </div>
         )}
+
+        {/* ヘッダー・タイトルセクション */}
+        <header className="text-center mb-8 w-full">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-pink-950/70 border border-pink-400/40 text-pink-200 text-xs md:text-sm tracking-widest mb-4 shadow-lg shadow-pink-950/50">
+            <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+            <span>魔法のコンパクトが暴く、あなたのB面称号と推定女子力</span>
+            <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+          </div>
+
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-wider bg-gradient-to-b from-pink-100 via-pink-300 to-amber-300 bg-clip-text text-transparent drop-shadow-[0_4px_24px_rgba(236,72,153,0.45)]">
+            女装二つ名メーカー
+          </h1>
+          <p className="mt-3 text-pink-200/75 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+            お名前（B面ネーム・アカウント名）から唯一無二の異名を召喚。
+            <span className="text-amber-300 font-semibold">
+              傾国の美少女85% × 女装さんリアルあるある15%
+            </span>
+            の小悪魔ガチャ診断！
+          </p>
+        </header>
+
+        {/* 入力＆モード切替パネル */}
+        <section className="w-full bg-gradient-to-b from-[#1a0916]/95 to-[#11050e]/95 border border-pink-500/40 rounded-2xl p-5 sm:p-7 shadow-[0_0_50px_rgba(0,0,0,0.85)] backdrop-blur-md mb-8">
+          {/* モード切り替えトグル */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pb-5 mb-5 border-b border-pink-500/20">
+            <div className="flex items-center gap-2 text-xs sm:text-sm text-pink-200">
+              <BookOpen className="w-4 h-4 text-pink-400 shrink-0" />
+              <span>鑑定モード選択：</span>
+            </div>
+
+            <div className="grid grid-cols-2 bg-[#0c040a] p-1 rounded-xl border border-pink-500/30 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => handleModeToggle("standard")}
+                className={`flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  mode === "standard"
+                    ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-md shadow-pink-500/25"
+                    : "text-pink-300/60 hover:text-pink-200"
+                }`}
+              >
+                <Crown className="w-3.5 h-3.5" />
+                <span>通常モード（名前固定）</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleModeToggle("daily")}
+                className={`flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+                  mode === "daily"
+                    ? "bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-md shadow-purple-500/25"
+                    : "text-pink-300/60 hover:text-pink-200"
+                }`}
+              >
+                <Calendar className="w-3.5 h-3.5" />
+                <span>今日の盛れ運勢（日替わり）</span>
+              </button>
+            </div>
+          </div>
+
+          {/* 名前入力フォーム */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleDiagnose();
+            }}
+            className="flex flex-col sm:flex-row gap-3"
+          >
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={inputName}
+                onChange={(e) => setInputName(e.target.value)}
+                placeholder="B面のお名前やアカウント名を入力（例：れいな / @user）"
+                maxLength={32}
+                aria-label="診断する名前"
+                className="w-full px-4 py-3.5 sm:py-4 rounded-xl bg-[#0b0309]/90 border border-pink-500/40 text-pink-50 placeholder-pink-300/35 text-base sm:text-lg focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400/25 transition-all"
+              />
+              {inputName && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-pink-300/50">
+                  {inputName.length}/32
+                </span>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={!inputName.trim() || isSummoning}
+              className="px-7 py-3.5 sm:py-4 rounded-xl font-black text-base sm:text-lg bg-gradient-to-r from-pink-500 via-rose-400 to-amber-300 text-stone-950 hover:brightness-110 active:scale-[0.99] disabled:opacity-40 disabled:pointer-events-none transition-all shadow-[0_0_25px_rgba(236,72,153,0.45)] flex items-center justify-center gap-2 cursor-pointer shrink-0"
+            >
+              <Wand2 className={`w-5 h-5 ${isSummoning ? "animate-spin" : ""}`} />
+              <span>{isSummoning ? "コンパクト詠唱中..." : "B面称号を覚醒させる"}</span>
+            </button>
+          </form>
+
+          {/* クイック体験サンプル＆確率表ボタン */}
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 pt-2">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-xs text-pink-300/70 mr-1">一発体験：</span>
+              {samplePresets.map((preset) => (
+                <button
+                  key={preset.label}
+                  type="button"
+                  onClick={() => {
+                    setInputName(preset.name);
+                    setMode("standard");
+                    handleDiagnose(preset.name, "standard", false);
+                  }}
+                  className="text-xs px-2.5 py-1 rounded-lg bg-[#140711] hover:bg-pink-950/70 border border-pink-800/50 hover:border-pink-400/60 text-pink-200 transition-colors cursor-pointer flex items-center gap-1"
+                >
+                  <span>{preset.label}</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-pink-500/20 text-amber-200 font-bold">
+                    {preset.badge}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowDictModal(true)}
+              className="text-xs text-pink-300/80 hover:text-pink-200 underline underline-offset-4 flex items-center gap-1 cursor-pointer"
+            >
+              <HelpCircle className="w-3.5 h-3.5" />
+              <span>
+                排出確率・収録ワード({PREFIXES.length + COOL_SUFFIXES.length + GAP_SUFFIXES.length}種)を見る
+              </span>
+            </button>
+          </div>
+        </section>
       </main>
 
       {/* 辞書データ・レアリティ確率モーダル */}
