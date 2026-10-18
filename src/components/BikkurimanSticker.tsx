@@ -127,14 +127,18 @@ export default function BikkurimanSticker({ result }: BikkurimanStickerProps) {
 
               {/* 前半の修飾語リボン */}
               <div
-                className={`rounded px-2 py-0.5 text-center shadow-md ${
+                className={`rounded px-1.5 py-0.5 text-center shadow-md overflow-hidden ${
                   isNormal
                     ? "bg-stone-900/90 border border-stone-500/60"
                     : "bg-[#1a0816]/90 border border-pink-300/90"
                 }`}
               >
                 <p
-                  className={`text-[10px] sm:text-xs font-black truncate ${
+                  className={`${
+                    result.prefix.length >= 15
+                      ? "text-[9px] sm:text-[11px]"
+                      : "text-[10px] sm:text-xs"
+                  } font-black leading-tight break-words ${
                     isNormal ? "text-stone-300" : "text-pink-200"
                   }`}
                 >
@@ -142,13 +146,23 @@ export default function BikkurimanSticker({ result }: BikkurimanStickerProps) {
                 </p>
               </div>
 
-              {/* 後半のメインキャラ名（Nは素朴な白文字、R以上は鮮やかな極太袋文字） */}
-              <div className="mt-1 text-center">
+              {/* 後半のメインキャラ名（文字数に応じて自動縮小し枠内に収める） */}
+              <div className="mt-1 text-center px-0.5 overflow-hidden">
                 <div
-                  className="font-black text-lg sm:text-2xl leading-tight tracking-tighter break-keep"
+                  className={`font-black leading-tight tracking-tighter break-words ${
+                    result.suffix.length >= 18
+                      ? "text-[11px] sm:text-[13px]"
+                      : result.suffix.length >= 15
+                      ? "text-xs sm:text-sm"
+                      : result.suffix.length >= 12
+                      ? "text-sm sm:text-base"
+                      : result.suffix.length >= 10
+                      ? "text-base sm:text-xl"
+                      : "text-lg sm:text-2xl"
+                  }`}
                   style={{
                     color: isNormal ? "#e7e5e4" : meta.titleColor,
-                    WebkitTextStroke: "1.5px #111111",
+                    WebkitTextStroke: result.suffix.length >= 15 ? "1px #111111" : "1.5px #111111",
                     textShadow: isNormal
                       ? "0 2px 0 #000000, -1.5px -1.5px 0 #1c1917, 1.5px -1.5px 0 #1c1917, -1.5px 1.5px 0 #1c1917"
                       : `0 2px 0 #000000, 2px 2px 0 ${meta.titleStroke}, -2px -2px 0 #111111, 2px -2px 0 #111111, -2px 2px 0 #111111, 0 4px 10px rgba(0,0,0,0.85)`,

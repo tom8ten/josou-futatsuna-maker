@@ -324,7 +324,7 @@ export async function GET(req: NextRequest) {
               <div
                 style={{
                   display: "flex",
-                  fontSize: "30px",
+                  fontSize: result.prefix.length >= 15 ? "26px" : "30px",
                   fontWeight: 700,
                   color: "#fde68a",
                   marginBottom: "2px",
@@ -335,7 +335,14 @@ export async function GET(req: NextRequest) {
               <div
                 style={{
                   display: "flex",
-                  fontSize: result.suffix.length > 12 ? "44px" : "52px",
+                  fontSize:
+                    result.suffix.length >= 18
+                      ? "32px"
+                      : result.suffix.length >= 14
+                      ? "38px"
+                      : result.suffix.length >= 11
+                      ? "44px"
+                      : "52px",
                   fontWeight: 900,
                   color: rarityStyle.accentColor,
                   textAlign: "center",

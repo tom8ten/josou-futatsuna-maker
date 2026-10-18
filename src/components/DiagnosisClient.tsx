@@ -381,21 +381,33 @@ export default function DiagnosisClient({
                 <BikkurimanSticker result={result} />
 
                 {/* カード中央：生成された二つ名 */}
-                <div className="my-6 py-7 px-4 sm:px-6 rounded-2xl bg-gradient-to-b from-[#1f0a1b]/90 via-[#150612] to-[#0d040b]/90 border border-pink-400/35 text-center relative shadow-inner">
+                <div className="my-6 py-6 sm:py-7 px-3 sm:px-6 rounded-2xl bg-gradient-to-b from-[#1f0a1b]/90 via-[#150612] to-[#0d040b]/90 border border-pink-400/35 text-center relative shadow-inner overflow-hidden">
                   <p className="text-xs sm:text-sm text-pink-300/80 tracking-[0.25em] mb-2">
                     ― 鏡の向こうで覚醒せし二つ名 ―
                   </p>
 
-                  <div className="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-snug break-keep">
+                  <div className="font-black tracking-tight leading-snug break-words max-w-full">
                     <span
-                      className={`block text-lg sm:text-2xl md:text-3xl mb-1 font-bold ${
+                      className={`block mb-1.5 font-bold break-words ${
+                        result.prefix.length >= 15
+                          ? "text-sm sm:text-xl md:text-2xl"
+                          : "text-base sm:text-2xl md:text-3xl"
+                      } ${
                         result.rarity === "N" ? "text-stone-300/90" : "text-amber-200/95"
                       }`}
                     >
                       {result.prefix}
                     </span>
                     <span
-                      className={`bg-clip-text text-transparent bg-gradient-to-r ${
+                      className={`inline-block max-w-full break-words bg-clip-text text-transparent bg-gradient-to-r ${
+                        result.suffix.length >= 18
+                          ? "text-base sm:text-2xl md:text-3xl"
+                          : result.suffix.length >= 14
+                          ? "text-lg sm:text-3xl md:text-4xl"
+                          : result.suffix.length >= 10
+                          ? "text-xl sm:text-3xl md:text-4xl"
+                          : "text-2xl sm:text-4xl md:text-5xl"
+                      } ${
                         result.rarity === "UR"
                           ? "from-pink-200 via-amber-200 to-purple-200 drop-shadow-[0_2px_18px_rgba(236,72,153,0.45)]"
                           : result.rarity === "N"
