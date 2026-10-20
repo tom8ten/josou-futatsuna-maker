@@ -58,6 +58,7 @@ export default function DiagnosisClient({
   const [isSummoning, setIsSummoning] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isDownloadingSticker, setIsDownloadingSticker] = useState<"front" | "back" | null>(null);
   const [showOgPreview, setShowOgPreview] = useState(false);
   const [showDictModal, setShowDictModal] = useState(false);
   const topAnchorRef = useRef<HTMLDivElement>(null);
@@ -199,6 +200,36 @@ export default function DiagnosisClient({
       setShowOgPreview(true);
     } finally {
       setIsDownloading(false);
+    }
+  };
+
+  // ビックリマン風ステッカー画像のワンタップダウンロード（表面・裏面）
+  const handleDownloadSticker = async (side: "front" | "back") => {
+    if (!result || isDownloadingSticker) return;
+    setIsDownloadingSticker(side);
+    try {
+      const params = new URLSearchParams();
+      params.set("name", result.name);
+      params.set("side", side);
+      if (result.mode === "daily") {
+        params.set("mode", "daily");
+        if (result.dateStr) params.set("date", result.dateStr);
+      }
+      const response = await fetch(`/api/sticker?${params.toString()}`);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      const sideLabel = side === "front" ? "omote" : "ura";
+      link.download = `josou-sticker-${result.name}-${sideLabel}-${result.rarity}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      // fallback
+    } finally {
+      setIsDownloadingSticker(null);
     }
   };
 
@@ -562,6 +593,41 @@ export default function DiagnosisClient({
                     {isDownloading ? "画像を生成中..." : "結果カード画像を保存 (PNG)"}
                   </span>
                 </button>
+              </div>
+
+              {/* ステッカー画像保存（表面・裏面の選択形式） */}
+              <div className="bg-[#12040f]/90 border border-pink-400/35 rounded-xl p-3.5 sm:p-4">
+                <div className="flex items-center justify-between mb-2.5">
+                  <span className="text-xs sm:text-sm font-black text-pink-300 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-pink-400" />
+                    <span>ビックリマン風ステッカー画像を保存 (PNG)</span>
+                  </span>
+                  <span className="text-[11px] text-pink-200/70 font-bold">表面／裏面を選択</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadSticker("front")}
+                    disabled={isDownloadingSticker !== null}
+                    className="py-3 px-4 rounded-xl bg-gradient-to-r from-[#1d0718] to-[#12040f] hover:from-pink-950/80 hover:to-[#22081c] border border-pink-400/50 text-pink-200 text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.98] cursor-pointer"
+                  >
+                    <Download className="w-4 h-4 text-pink-400" />
+                    <span>
+                      {isDownloadingSticker === "front" ? "表面を生成中..." : "🎴 表面（イラスト）を保存"}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadSticker("back")}
+                    disabled={isDownloadingSticker !== null}
+                    className="py-3 px-4 rounded-xl bg-gradient-to-r from-[#1d0718] to-[#12040f] hover:from-pink-950/80 hover:to-[#22081c] border border-pink-400/50 text-pink-200 text-xs sm:text-sm font-black flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.98] cursor-pointer"
+                  >
+                    <Download className="w-4 h-4 text-pink-400" />
+                    <span>
+                      {isDownloadingSticker === "back" ? "裏面を生成中..." : "📜 裏面（解説・ウワサ）を保存"}
+                    </span>
+                  </button>
+                </div>
               </div>
 
               <div className="flex flex-wrap items-center justify-center gap-3 pt-1">

@@ -160,7 +160,7 @@ export default function BikkurimanSticker({ result }: BikkurimanStickerProps) {
           fontFamily:
             '"Hiragino Kaku Gothic ProN", "Hiragino Sans", "BIZ UDPGothic", "Yu Gothic", "Meiryo", system-ui, sans-serif',
         }}
-        className={`group relative w-68 h-68 sm:w-80 sm:h-80 rounded-xl p-2 cursor-pointer select-none transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] ${outerFrameClass}`}
+        className={`group relative w-72 h-72 sm:w-80 sm:h-80 rounded-xl p-2 cursor-pointer select-none transition-transform duration-300 hover:scale-[1.02] active:scale-[0.98] ${outerFrameClass}`}
       >
         {!isFlipped ? (
           /* ================= 表面：本格ビックリマン風イラスト＆角プリズム＆高視認性袋文字タイトル ================= */
@@ -182,7 +182,7 @@ export default function BikkurimanSticker({ result }: BikkurimanStickerProps) {
               <div className="pointer-events-none absolute inset-0 shimmer-effect opacity-90" />
             )}
 
-            {/* 上部：高コントラスト二つ名ネームプレート */}
+            {/* 上部：高コントラスト二つ名ネームプレート（コンパクト化してイラスト全景を魅せる） */}
             {renderStickerTitle(result.prefix, result.suffix, isNormal)}
 
             {/* 下部：種族バッジ＋No＋対象者ネーム＋女子力（1行に集約しイラストの可視面積を最大化） */}
@@ -240,22 +240,22 @@ export default function BikkurimanSticker({ result }: BikkurimanStickerProps) {
           </div>
         ) : (
           /* ================= 裏面：当時のビックリマン「悪魔VS天使シール 裏書き」風デザイン ================= */
-          <div className="relative w-full h-full rounded-lg border-[3px] border-pink-950 bg-[#fef9c3] text-pink-950 p-2.5 flex flex-col justify-between overflow-hidden">
+          <div className="relative w-full h-full rounded-lg border-[3px] border-pink-950 bg-[#fef9c3] text-pink-950 p-1.5 sm:p-2.5 flex flex-col justify-between overflow-hidden">
             {/* レトロ印刷の内枠 */}
-            <div className="border-2 border-pink-600 rounded h-full p-2 flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between border-b-2 border-pink-900 pb-1">
-                  <span className="text-[10px] font-black bg-pink-600 text-yellow-100 px-1.5 py-0.5 rounded">
+            <div className="border-2 border-pink-600 rounded h-full p-1.5 sm:p-2 flex flex-col justify-between overflow-hidden">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center justify-between border-b border-pink-900/40 pb-0.5">
+                  <span className="text-[9px] sm:text-[10px] font-black bg-pink-600 text-yellow-100 px-1.5 py-0.5 rounded">
                     小悪魔VS天使 A面シール
                   </span>
-                  <span className="text-xs font-mono font-black text-pink-900">
+                  <span className="text-[10px] sm:text-xs font-mono font-black text-pink-900">
                     No.{stickerNo} [{result.rarity}]
                   </span>
                 </div>
 
-                {/* ミニキャラアイコン＋二つ名（省略せず全文表示） */}
-                <div className="mt-1.5 flex items-center gap-2 bg-pink-950 text-yellow-200 rounded p-1.5">
-                  <div className="w-10 h-10 rounded border border-pink-300 overflow-hidden shrink-0">
+                {/* ミニキャラアイコン＋二つ名 */}
+                <div className="flex items-center gap-1.5 bg-pink-950 text-yellow-200 rounded p-1 sm:p-1.5">
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded border border-pink-300 overflow-hidden shrink-0">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={meta.imageSrc}
@@ -265,33 +265,38 @@ export default function BikkurimanSticker({ result }: BikkurimanStickerProps) {
                     />
                   </div>
                   <div className="min-w-0 flex-1 text-left">
-                    <div className="text-[10px] text-pink-200 font-bold leading-tight break-words">
+                    <div className="text-[9px] sm:text-[10px] text-pink-200 font-bold leading-none truncate">
                       {result.prefix}
                     </div>
-                    <div className="text-xs sm:text-sm font-black text-yellow-200 leading-tight break-words mt-0.5">
+                    <div className="text-[11px] sm:text-xs font-black text-yellow-200 leading-tight truncate mt-0.5">
                       {result.suffix}
                     </div>
                   </div>
                 </div>
 
-                {/* 必殺スキル解説 */}
-                <div className="mt-1.5 bg-yellow-100 border border-pink-900/40 rounded p-1.5 text-[11px] leading-snug text-left">
-                  <div className="font-black text-pink-700">
+                {/* 固有スキル解説 */}
+                <div className="bg-yellow-100 border border-pink-900/40 rounded p-1 sm:p-1.5 text-left">
+                  <div className="font-black text-pink-700 text-[10px] sm:text-[11px] leading-tight">
                     ★ 固有スキル：【{result.skill.name}】
                   </div>
-                  <p className="text-pink-950 mt-0.5 text-[10px] font-bold">
+                  <p className="text-pink-950 mt-0.5 text-[9px] sm:text-[10px] font-medium leading-tight line-clamp-2">
                     {result.skill.description}
+                  </p>
+                </div>
+
+                {/* 秘密のドレッサーウワサ欄 */}
+                <div className="bg-pink-50 border border-dashed border-pink-600 rounded p-1 sm:p-1.5 text-left">
+                  <div className="font-black text-pink-700 text-[9px] sm:text-[10px] leading-tight">
+                    【A面のウワサ】
+                  </div>
+                  <p className="text-stone-900 font-bold text-[9px] sm:text-[10px] leading-tight mt-0.5 line-clamp-3 sm:line-clamp-none">
+                    {result.flavorText}
                   </p>
                 </div>
               </div>
 
-              {/* 秘密のドレッサーウワサ欄 */}
-              <div className="bg-pink-50 border-2 border-dashed border-pink-600 rounded p-1.5 text-[10px] leading-snug text-left">
-                <span className="font-black text-pink-700 mr-1">【A面のウワサ】</span>
-                <span className="text-stone-900 font-bold">{result.flavorText}</span>
-              </div>
-
-              <div className="flex items-center justify-between text-[10px] font-bold text-pink-900 pt-1 border-t border-pink-900/30">
+              {/* フッター */}
+              <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-bold text-pink-900 pt-1 border-t border-pink-900/30">
                 <span>系統：{meta.archetypeName}</span>
                 <span>属性：{result.attribute}</span>
               </div>
