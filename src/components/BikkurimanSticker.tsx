@@ -25,7 +25,7 @@ function renderStickerTitle(
   // 括弧付きの二つ名（例: 幻影の美神（ヴィーナス）、ウインク一発の狙撃手（スナイパー））
   const parenMatch = suffix.match(/^(.*?)[（(](.*?)[）)]$/);
 
-  // 漢字の潰れを防ぐ8方向の外周シャドウアウトライン（-webkit-text-strokeによる文字潰れの解消）
+  // 漢字の潰れを防ぐ8方向の外周シャドウアウトライン
   const shadowOutline = isNormal
     ? "0 1px 0 #000, 1px 0 0 #000, -1px 0 0 #000, 0 -1px 0 #000, 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 2px 4px rgba(0,0,0,0.95)"
     : "0 1px 0 #000, 1px 0 0 #000, -1px 0 0 #000, 0 -1px 0 #000, 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 0 0 6px rgba(244,114,182,0.65), 0 2px 4px rgba(0,0,0,0.95)";
@@ -34,16 +34,16 @@ function renderStickerTitle(
 
   return (
     <div
-      className={`relative z-20 mx-2 mt-2 px-2.5 py-1.5 sm:py-2 rounded-lg border-2 text-center shadow-[0_4px_16px_rgba(0,0,0,0.9)] backdrop-blur-[3px] transition-all ${
+      className={`relative z-20 px-2 py-1 text-center border-b shadow-md backdrop-blur-[2px] transition-all ${
         isNormal
-          ? "bg-stone-950/92 border-stone-500/80"
-          : "bg-gradient-to-b from-[#180614]/95 via-[#120510]/95 to-[#180614]/95 border-pink-400/90 shadow-[0_0_14px_rgba(244,114,182,0.4)]"
+          ? "bg-stone-950/82 border-stone-600"
+          : "bg-gradient-to-b from-[#180614]/88 via-[#120510]/85 to-[#180614]/88 border-pink-400/80 shadow-[0_2px_10px_rgba(0,0,0,0.6)]"
       }`}
     >
-      {/* 1段目：冠修飾語 */}
-      <div className="flex items-center justify-center pb-0.5 border-b border-pink-500/25">
+      {/* 1段目：冠修飾語（コンパクトに配置しイラストの視界を確保） */}
+      <div className="flex items-center justify-center">
         <span
-          className={`text-[9px] sm:text-[11px] font-black tracking-tight leading-tight line-clamp-1 ${
+          className={`text-[9px] sm:text-[10px] font-black tracking-tight leading-none line-clamp-1 ${
             isNormal ? "text-stone-300" : "text-pink-200"
           }`}
           style={{
@@ -54,12 +54,12 @@ function renderStickerTitle(
         </span>
       </div>
 
-      {/* 2段目：メイン二つ名（同じ枠の2段目として一体配置） */}
-      <div className="pt-1 flex flex-col items-center justify-center">
+      {/* 2段目：メイン二つ名（同じ枠内の2段目としてスマートに配置） */}
+      <div className="mt-0.5 flex flex-col items-center justify-center">
         {parenMatch ? (
-          <div className="flex flex-col items-center justify-center leading-tight">
+          <div className="flex items-center justify-center gap-1 leading-tight flex-wrap">
             <span
-              className="font-black text-sm sm:text-base md:text-lg tracking-tight"
+              className="font-black text-xs sm:text-sm tracking-tight"
               style={{
                 color: titleColor,
                 textShadow: shadowOutline,
@@ -68,7 +68,7 @@ function renderStickerTitle(
               {parenMatch[1]}
             </span>
             <span
-              className={`font-black text-[10px] sm:text-[11px] tracking-tight leading-none mt-0.5 ${
+              className={`font-black text-[9px] sm:text-[10px] tracking-tight leading-none ${
                 isNormal ? "text-stone-300" : "text-pink-200"
               }`}
               style={{
@@ -81,13 +81,13 @@ function renderStickerTitle(
         ) : (
           <span
             className={`font-black leading-tight tracking-tight break-words max-w-full ${
-              suffix.length <= 4
-                ? "text-base sm:text-xl"
-                : suffix.length <= 7
-                ? "text-sm sm:text-lg"
-                : suffix.length <= 11
-                ? "text-xs sm:text-base"
-                : "text-[11px] sm:text-sm"
+              suffix.length <= 5
+                ? "text-sm sm:text-base"
+                : suffix.length <= 8
+                ? "text-xs sm:text-sm"
+                : suffix.length <= 12
+                ? "text-[11px] sm:text-xs"
+                : "text-[10px] sm:text-[11px]"
             }`}
             style={{
               color: titleColor,
@@ -185,54 +185,49 @@ export default function BikkurimanSticker({ result }: BikkurimanStickerProps) {
             {/* 上部：高コントラスト二つ名ネームプレート */}
             {renderStickerTitle(result.prefix, result.suffix, isNormal)}
 
-            {/* 下部：種族バッジ＋対象者ネームプレート＆女子力フッター */}
-            <div className="relative z-20 flex flex-col">
-              {/* 種族・シールNo・レア度ミニバー */}
-              <div className="px-2 pb-1 pt-3 bg-gradient-to-t from-stone-950/95 via-stone-950/70 to-transparent flex items-center justify-between gap-1">
+            {/* 下部：種族バッジ＋No＋対象者ネーム＋女子力（1行に集約しイラストの可視面積を最大化） */}
+            <div
+              className={`relative z-20 bg-stone-950/88 backdrop-blur-[2px] border-t px-2 py-1 flex items-center justify-between text-xs ${
+                isNormal ? "border-stone-600" : "border-pink-400/80"
+              }`}
+              style={{ boxShadow: isNormal ? undefined : `0 -2px 10px ${palette.glow}` }}
+            >
+              <div className="flex items-center gap-1.5 min-w-0">
                 <span
-                  className="text-[10px] sm:text-[11px] font-black px-2 py-0.5 rounded border border-stone-950 shadow-md tracking-tight"
+                  className="text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded border border-stone-950 shadow-sm shrink-0"
                   style={{
                     backgroundColor: isNormal ? "#44403c" : meta.sealBadgeBg,
                     color: isNormal ? "#e7e5e4" : meta.sealBadgeText,
                   }}
                 >
-                  {isNormal ? "一般A面シール" : meta.categoryLabel}
+                  {isNormal ? "一般A面" : meta.categoryLabel}
                 </span>
-
-                <div className="flex items-center gap-1">
-                  <span className="text-[10px] sm:text-[11px] font-black px-1.5 py-0.5 rounded bg-stone-950/95 text-stone-200 border border-stone-600 font-mono shadow">
-                    No.{stickerNo}
-                  </span>
-                  <span
-                    className={`text-[10px] sm:text-xs font-black px-2 py-0.5 rounded border border-stone-950 shadow-md ${
-                      isNormal
-                        ? "bg-stone-600 text-stone-200"
-                        : result.rarity === "R"
-                        ? "bg-purple-600 text-white"
-                        : "bg-pink-600 text-yellow-200"
-                    }`}
-                  >
-                    {result.rarity}
-                  </span>
-                </div>
-              </div>
-
-              {/* ネーム＆女子力バー */}
-              <div
-                className={`bg-stone-950/95 border-t px-2.5 py-1.5 flex items-center justify-between text-xs ${
-                  isNormal ? "border-stone-600" : "border-pink-400/80"
-                }`}
-                style={{ boxShadow: isNormal ? undefined : `0 -4px 16px ${palette.glow}` }}
-              >
                 <span
-                  className={`font-black truncate max-w-[48%] ${
+                  className={`font-black truncate text-[11px] sm:text-xs ${
                     isNormal ? "text-stone-300" : "text-pink-200"
                   }`}
                 >
                   {result.name}
                 </span>
+              </div>
+
+              <div className="flex items-center gap-1 font-mono shrink-0">
+                <span className="text-[9px] sm:text-[10px] font-black px-1 py-0.5 rounded bg-stone-900 text-stone-300 border border-stone-700">
+                  No.{stickerNo}
+                </span>
                 <span
-                  className={`font-mono font-black px-2 py-0.5 rounded text-[11px] shadow ${
+                  className={`text-[9px] sm:text-[10px] font-black px-1.5 py-0.5 rounded border border-stone-950 ${
+                    isNormal
+                      ? "bg-stone-600 text-stone-200"
+                      : result.rarity === "R"
+                      ? "bg-purple-600 text-white"
+                      : "bg-pink-600 text-yellow-200"
+                  }`}
+                >
+                  {result.rarity}
+                </span>
+                <span
+                  className={`font-mono font-black px-1.5 py-0.5 rounded text-[10px] sm:text-[11px] shadow ${
                     isNormal
                       ? "bg-stone-800 text-stone-300 border border-stone-600"
                       : "text-yellow-100 bg-gradient-to-r from-pink-600 to-amber-600 border border-pink-300"
