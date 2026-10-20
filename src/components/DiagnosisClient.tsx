@@ -45,6 +45,10 @@ export default function DiagnosisClient({
   autoShowResult = false,
 }: DiagnosisClientProps) {
   const [inputName, setInputName] = useState(initialName);
+  const [hasUserEdited, setHasUserEdited] = useState(false);
+  const isSampleName =
+    !hasUserEdited &&
+    (inputName.trim() === "れいな" || inputName.trim() === "山田太郎");
   const [mode, setMode] = useState<DiagnosisMode>(initialMode);
   const [result, setResult] = useState<DiagnosisResult | null>(() =>
     autoShowResult && initialName.trim()
@@ -693,11 +697,21 @@ export default function DiagnosisClient({
                 id="name-input"
                 type="text"
                 value={inputName}
-                onChange={(e) => setInputName(e.target.value)}
+                onFocus={(e) => {
+                  if (isSampleName) {
+                    e.target.select();
+                  }
+                }}
+                onChange={(e) => {
+                  setHasUserEdited(true);
+                  setInputName(e.target.value);
+                }}
                 placeholder="A面のお名前やアカウント名を入力（例：れいな / @user）"
                 maxLength={32}
                 aria-label="診断する名前"
-                className="w-full px-4 py-3.5 sm:py-4 rounded-xl bg-[#0b0309]/90 border border-pink-500/40 text-pink-50 placeholder-pink-300/35 text-base sm:text-lg focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400/25 transition-all"
+                className={`w-full px-4 py-3.5 sm:py-4 rounded-xl bg-[#0b0309]/90 border border-pink-500/40 placeholder-pink-300/35 text-base sm:text-lg focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-400/25 transition-all ${
+                  isSampleName ? "text-pink-300/40 font-medium" : "text-pink-50"
+                }`}
               />
               {inputName && (
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-pink-300/50">
@@ -726,6 +740,7 @@ export default function DiagnosisClient({
                   type="button"
                   onClick={() => {
                     setInputName(preset.name);
+                    setHasUserEdited(preset.name !== "れいな" && preset.name !== "山田太郎");
                     setMode("standard");
                     handleDiagnose(preset.name, "standard", false);
                   }}
