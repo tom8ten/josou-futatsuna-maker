@@ -386,39 +386,46 @@ export default function DiagnosisClient({
                     ― 鏡の向こうで覚醒せし二つ名 ―
                   </p>
 
-                  <div className="font-black tracking-tight leading-snug break-words max-w-full">
-                    <span
-                      className={`block mb-1.5 font-bold break-words ${
-                        result.prefix.length >= 15
-                          ? "text-sm sm:text-xl md:text-2xl"
-                          : "text-base sm:text-2xl md:text-3xl"
-                      } ${
-                        result.rarity === "N" ? "text-stone-300/90" : "text-amber-200/95"
-                      }`}
-                    >
-                      {result.prefix}
-                    </span>
-                    <span
-                      className={`inline-block max-w-full break-words bg-clip-text text-transparent bg-gradient-to-r ${
-                        result.suffix.length >= 18
-                          ? "text-base sm:text-2xl md:text-3xl"
-                          : result.suffix.length >= 14
-                          ? "text-lg sm:text-3xl md:text-4xl"
-                          : result.suffix.length >= 10
-                          ? "text-xl sm:text-3xl md:text-4xl"
-                          : "text-2xl sm:text-4xl md:text-5xl"
-                      } ${
-                        result.rarity === "UR"
-                          ? "from-pink-200 via-amber-200 to-purple-200 drop-shadow-[0_2px_18px_rgba(236,72,153,0.45)]"
-                          : result.rarity === "N"
-                          ? "from-stone-200 via-pink-100/85 to-stone-300"
-                          : result.isGap
-                          ? "from-amber-200 via-pink-300 to-rose-300 drop-shadow-[0_2px_18px_rgba(236,72,153,0.45)]"
-                          : "from-pink-100 via-pink-300 to-amber-200 drop-shadow-[0_2px_18px_rgba(236,72,153,0.45)]"
-                      }`}
-                    >
-                      『{result.suffix}』
-                    </span>
+                  <div className="max-w-xl mx-auto p-3.5 sm:p-5 rounded-xl border border-pink-400/40 bg-stone-950/80 shadow-lg font-black tracking-tight leading-snug break-words">
+                    {/* 1段目：冠修飾語 */}
+                    <div className="pb-1.5 mb-2 border-b border-pink-500/20">
+                      <span
+                        className={`block font-bold break-words ${
+                          result.prefix.length >= 15
+                            ? "text-sm sm:text-xl md:text-2xl"
+                            : "text-base sm:text-2xl md:text-3xl"
+                        } ${
+                          result.rarity === "N" ? "text-stone-300/90" : "text-amber-200/95"
+                        }`}
+                      >
+                        {result.prefix}
+                      </span>
+                    </div>
+
+                    {/* 2段目：メイン二つ名 */}
+                    <div>
+                      <span
+                        className={`inline-block max-w-full break-words bg-clip-text text-transparent bg-gradient-to-r ${
+                          result.suffix.length >= 18
+                            ? "text-base sm:text-2xl md:text-3xl"
+                            : result.suffix.length >= 14
+                            ? "text-lg sm:text-3xl md:text-4xl"
+                            : result.suffix.length >= 10
+                            ? "text-xl sm:text-3xl md:text-4xl"
+                            : "text-2xl sm:text-4xl md:text-5xl"
+                        } ${
+                          result.rarity === "UR"
+                            ? "from-pink-200 via-amber-200 to-purple-200 drop-shadow-[0_2px_18px_rgba(236,72,153,0.45)]"
+                            : result.rarity === "N"
+                            ? "from-stone-200 via-pink-100/85 to-stone-300"
+                            : result.isGap
+                            ? "from-amber-200 via-pink-300 to-rose-300 drop-shadow-[0_2px_18px_rgba(236,72,153,0.45)]"
+                            : "from-pink-100 via-pink-300 to-amber-200 drop-shadow-[0_2px_18px_rgba(236,72,153,0.45)]"
+                        }`}
+                      >
+                        『{result.suffix}』
+                      </span>
+                    </div>
                   </div>
                 </div>
 
