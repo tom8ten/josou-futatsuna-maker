@@ -672,6 +672,15 @@ export default function DiagnosisClient({
           </div>
 
           {/* 名前入力フォーム */}
+          <div className="mb-1.5 pl-1 flex items-center justify-between">
+            <label
+              htmlFor="name-input"
+              className="text-xs sm:text-sm font-bold text-pink-200 flex items-center gap-1.5 cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+              <span>ここに名前を入れてください</span>
+            </label>
+          </div>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -681,6 +690,7 @@ export default function DiagnosisClient({
           >
             <div className="relative flex-1">
               <input
+                id="name-input"
                 type="text"
                 value={inputName}
                 onChange={(e) => setInputName(e.target.value)}
